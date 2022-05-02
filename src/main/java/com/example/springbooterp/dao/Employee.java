@@ -2,6 +2,7 @@ package com.example.springbooterp.dao;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Setter;
 
@@ -10,6 +11,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "employees")
 @Data
+
 public class Employee {
 
     @Id
@@ -24,5 +26,7 @@ public class Employee {
     private String lastName;
 
     private String email;
+
+
 
 }

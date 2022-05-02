@@ -10,12 +10,13 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.net.http.HttpResponse;
 import java.util.List;
 
 @RestController
@@ -26,6 +27,8 @@ public class EmployeeController {
     private EmployeeService employeeService;
     @Autowired
     private EmployeeRepo employeeRepo;
+
+
 
     @GetMapping("/allEmployee")
     @ResponseStatus(HttpStatus.OK)
@@ -89,6 +92,13 @@ public class EmployeeController {
         }
 
     }
+
+    @GetMapping("/page/{offset}/{pageSize}")
+    public ResponseEntity<Page<Employee>> getEmployeesWithPagination(@PathVariable int offset, @PathVariable int pageSize){
+        return new ResponseEntity<>(employeeService.getEmployeesWithPagination(offset,pageSize),HttpStatus.OK);
+    }
+
+
 
 
 // use thymleaf to display results

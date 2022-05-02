@@ -8,10 +8,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.fge.jsonpatch.JsonPatch;
 import com.github.fge.jsonpatch.JsonPatchException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import javax.annotation.PostConstruct;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService{
@@ -32,5 +37,18 @@ public class EmployeeServiceImpl implements EmployeeService{
         JsonNode patched = patch.apply(mapper.convertValue(targetEmployee,JsonNode.class));
         return mapper.treeToValue(patched, Employee.class);
     }
+
+    @Override
+    public Page<Employee> getEmployeesWithPagination(int offset, int pageSize) {
+        return employeeRepo.findAll(PageRequest.of(offset,pageSize));
+    }
+
+//    @PostConstruct
+//    public void initDB(){
+//        List<Employee> employees = IntStream.range(1,100)
+//                .mapToObj(i-> new Employee(i+20,"name" +i, "lname"+i, "email"+i))
+//                .collect(Collectors.toList());
+//        employeeRepo.saveAll(employees);
+//    }
 }
 
