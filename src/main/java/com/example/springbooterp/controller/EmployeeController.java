@@ -3,6 +3,7 @@ package com.example.springbooterp.controller;
 import com.example.springbooterp.dao.Employee;
 import com.example.springbooterp.repo.EmployeeRepo;
 import com.example.springbooterp.service.EmployeeService;
+import com.github.fge.jsonpatch.JsonPatch;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -61,6 +62,7 @@ public class EmployeeController {
         return new ResponseEntity<>(employeeRepo.save(employee),HttpStatus.CREATED);
     }
 
+    //Reading Material - https://www.baeldung.com/spring-rest-json-patch
     @PutMapping("/employee/{id}")
     public Employee updateEmployee(@RequestBody Employee employee, @PathVariable Long id){
         return employeeRepo.findById(id)
@@ -76,7 +78,17 @@ public class EmployeeController {
     }
 
 
-    @PatchMapping("/employee/{id}")
+    @PatchMapping(value = "/employee/{id}", consumes = "application/json-pacth+json")
+    public ResponseEntity<Employee> patchEmployee ( @PathVariable Long id, @RequestBody JsonPatch patch){
+        try{
+            Employee employee = employeeRepo.findById(id).orElseThrow(Exception::new);
+            return  new ResponseEntity<>(employeeService.applyPatchToEmployee(patch,employee), HttpStatus.CREATED);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+    }
 
 
 // use thymleaf to display results
