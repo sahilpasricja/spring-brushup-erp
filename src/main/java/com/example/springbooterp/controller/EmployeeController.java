@@ -1,7 +1,10 @@
 package com.example.springbooterp.controller;
 
 import com.example.springbooterp.dao.Employee;
+import com.example.springbooterp.dao.EmployeeRoster;
+import com.example.springbooterp.dao.EmployeeRosterInput;
 import com.example.springbooterp.repo.EmployeeRepo;
+import com.example.springbooterp.repo.EmployeeRosterRepo;
 import com.example.springbooterp.service.EmployeeService;
 import com.github.fge.jsonpatch.JsonPatch;
 import io.swagger.v3.oas.annotations.Operation;
@@ -12,12 +15,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.IOException;
 import java.util.List;
+
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -27,6 +32,9 @@ public class EmployeeController {
     private EmployeeService employeeService;
     @Autowired
     private EmployeeRepo employeeRepo;
+
+    @Autowired
+    private EmployeeRosterRepo employeeRosterRepo;
 
 
 
@@ -97,6 +105,14 @@ public class EmployeeController {
     public ResponseEntity<Page<Employee>> getEmployeesWithPagination(@PathVariable int offset, @PathVariable int pageSize){
         return new ResponseEntity<>(employeeService.getEmployeesWithPagination(offset,pageSize),HttpStatus.OK);
     }
+
+    @RequestMapping(path = "/employeeRoster", method = POST, consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+    public String saveEmployeeRoster(@ModelAttribute EmployeeRosterInput employeeRosterInput) throws IOException {
+        EmployeeRoster employeeRoster = employeeService.employeeRosterInputToEmployeeRoster(employeeRosterInput);
+        employeeRosterRepo.save(employeeRoster);
+        return "employee/success";
+    }
+
 
 
 

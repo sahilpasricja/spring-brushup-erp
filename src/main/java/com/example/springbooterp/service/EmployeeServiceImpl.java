@@ -1,7 +1,10 @@
 package com.example.springbooterp.service;
 
 import com.example.springbooterp.dao.Employee;
+import com.example.springbooterp.dao.EmployeeRoster;
+import com.example.springbooterp.dao.EmployeeRosterInput;
 import com.example.springbooterp.repo.EmployeeRepo;
+import com.example.springbooterp.repo.EmployeeRosterRepo;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,6 +17,7 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import javax.annotation.PostConstruct;
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -50,5 +54,13 @@ public class EmployeeServiceImpl implements EmployeeService{
 //                .collect(Collectors.toList());
 //        employeeRepo.saveAll(employees);
 //    }
+    public EmployeeRoster employeeRosterInputToEmployeeRoster(EmployeeRosterInput employeeRosterInput) throws IOException {
+        EmployeeRoster employeeRoster = new EmployeeRoster();
+        employeeRoster.setFileBytes(employeeRosterInput.getRosterFile().getBytes());
+        employeeRoster.setId(employeeRosterInput.getId());
+
+        return employeeRoster;
+    }
+
 }
 
