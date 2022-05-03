@@ -1,15 +1,12 @@
 package com.example.springbooterp.dao;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
-@Table(name = "employees")
+@Table(name = "employee")
 @Data
 
 public class Employee {
@@ -28,5 +25,6 @@ public class Employee {
     private String email;
 
 
+    private String password;
 
 }

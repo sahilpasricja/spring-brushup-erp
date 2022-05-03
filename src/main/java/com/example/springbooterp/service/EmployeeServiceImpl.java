@@ -13,6 +13,8 @@ import com.github.fge.jsonpatch.JsonPatchException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -27,6 +29,9 @@ public class EmployeeServiceImpl implements EmployeeService{
 
     @Autowired
     private EmployeeRepo employeeRepo;
+
+    PasswordEncoder passwordEncoder =
+            PasswordEncoderFactories.createDelegatingPasswordEncoder();
 
 
 
@@ -60,6 +65,31 @@ public class EmployeeServiceImpl implements EmployeeService{
         employeeRoster.setId(employeeRosterInput.getId());
 
         return employeeRoster;
+    }
+
+    public String encryptPassword(String password){
+        return passwordEncoder.encode(password);
+    }
+
+    public boolean CheckUserExists(String email){
+        List<Employee> employeesWithSameEmail = employeeRepo.findByEmail(email);
+        if (employeesWithSameEmail.isEmpty())
+            return false;
+        else
+            return true;
+    }
+
+    public boolean validateUserPassword(String inputPassword, String encryptedPassword){
+
+        if (passwordEncoder.matches(inputPassword,encryptedPassword))
+            return true;
+        else
+            return false;
+    }
+
+
+    public List<Employee> getEmployeeByEmail(String email){
+        return employeeRepo.findByEmail(email);
     }
 
 }
