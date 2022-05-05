@@ -24,7 +24,7 @@ public class Employee {
 
     private String email;
 
-
+    @Schema(hidden = true)
     private String password;
 
 }

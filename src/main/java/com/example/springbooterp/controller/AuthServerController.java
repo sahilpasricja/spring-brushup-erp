@@ -2,6 +2,7 @@ package com.example.springbooterp.controller;
 
 import com.example.springbooterp.dao.Employee;
 import com.example.springbooterp.repo.EmployeeRepo;
+import com.example.springbooterp.security.TokenSecurity;
 import com.example.springbooterp.service.EmployeeService;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -13,6 +14,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.thymeleaf.templateparser.markup.HTMLTemplateParser;
 
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
 import java.util.List;
 
 @RestController
@@ -25,6 +29,9 @@ public class AuthServerController {
     @Autowired
     EmployeeService employeeService;
 
+
+    @Autowired
+    TokenSecurity tokenSecurity;
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
     @ApiResponses(value = {
@@ -53,13 +60,14 @@ public class AuthServerController {
             @ApiResponse(responseCode
                     = "409", description = "Unable to Login")
     })
-    public ResponseEntity<Employee> employeeLogin(@RequestParam String email, @RequestParam String inputPassword){
+    public ResponseEntity<String> employeeLogin(@RequestParam String email, @RequestParam String inputPassword) throws UnrecoverableKeyException, KeyStoreException, NoSuchAlgorithmException {
         //TODO: Exception handling
         if (employeeService.CheckUserExists(email)) {
             Employee employeeByEmail = employeeService.getEmployeeByEmail(email).get(0);
             //System.out.println(encryptedInputPassword + "/n Existing record pass: /n" + employeeByEmail.getPassword() + "existing record ewmail " + employeeByEmail.getEmail());
             if (employeeService.validateUserPassword(inputPassword,employeeByEmail.getPassword()))
-                return new ResponseEntity<>(employeeByEmail, HttpStatus.OK);
+
+                return new ResponseEntity<>(tokenSecurity.createJWT(employeeByEmail), HttpStatus.OK);
             else
                 return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
