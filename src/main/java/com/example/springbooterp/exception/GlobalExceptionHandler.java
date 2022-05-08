@@ -42,8 +42,17 @@ public class GlobalExceptionHandler {
 
     }
 
-
-
-
-
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    ResponseEntity<Object> onMiscException(Exception e){
+        Violation voilation = Violation.builder()
+                .timestamp(Instant.now().getEpochSecond())
+                .status(HttpStatus.SERVICE_UNAVAILABLE.value())
+                .error(HttpStatus.SERVICE_UNAVAILABLE.getReasonPhrase())
+                .message(e.getMessage())
+                .build();
+        System.out.println(HttpStatus.BAD_REQUEST.getReasonPhrase());
+        return new ResponseEntity<>(voilation, HttpStatus.BAD_REQUEST);
+    }
 }
